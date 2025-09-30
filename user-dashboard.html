@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - ParkFinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Selection - ParkFinder</title>
+    <link rel="stylesheet" href="slot-selection.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #374151;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #6366f1;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #6366f1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .parking-slot {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .parking-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .slot-available {
+            background: #10b981;
+            color: white;
+        }
+
+        .slot-booked {
+            background: #ef4444;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .slot-my-booking {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .slot-ev {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .slot-number {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .slot-type {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .current-booking {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .booking-info h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+            text-align: left;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.75rem;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .history-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-active {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .no-booking {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                gap: 1rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-parking"></i> ParkFinder
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('parking')">Parking</button>
+                <button class="nav-tab" onclick="showTab('pricing')">Pricing</button>
+                <button class="nav-tab" onclick="showTab('map')">Map View</button>
+                <button class="nav-tab" onclick="showTab('ev')">EV Charging</button>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userName">User</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Parking Tab -->
+        <div id="parking-tab" class="tab-content active">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div class="stat-value" id="totalBookings">0</div>
+                    <div class="stat-label">Total Bookings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="totalHours">0</div>
+                    <div class="stat-label">Hours Parked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-value" id="totalSpent">₹0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-value" id="currentStatus">Available</div>
+                    <div class="stat-label">Current Status</div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Parking Slots -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Available Parking Slots</h2>
+                    </div>
+                    
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #10b981;"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>Booked</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #f59e0b;"></div>
+                            <span>Your Booking</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #8b5cf6;"></div>
+                            <span>EV Charging</span>
+                        </div>
+                    </div>
+
+                    <div class="slots-grid" id="slotsGrid">
+                        <!-- Slots will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Current Booking -->
+                <div class="card">
+                    <div id="currentBookingCard">
+                        <div class="no-booking">
+                            <i class="fas fa-parking" style="font-size: 3rem; color: #d1d5db; margin-bottom: 1rem;"></i>
+                            <h3>No Active Booking</h3>
+                            <p>Select an available slot to start parking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parking History -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Parking History</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Slot</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Duration</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    No parking history available
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other tabs content will be added here -->
+        <div id="pricing-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Pricing Information</h2>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; color: #6366f1; margin-bottom: 1rem;">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h3 style="margin-bottom: 2rem;">Simple & Transparent Pricing</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 12px; border: 2px solid #e5e7eb;">
+                            <h4 style="color: #10b981; margin-bottom: 1rem;">First 30 Minutes</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #374151;">FREE</div>
+                            <p style="color: #6b7280; margin-top: 0.5rem;">No charge for short stays</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 12px; border: 2px solid #6366f1;">
+                            <h4 style="color: #6366f1; margin-bottom: 1rem;">After 30 Minutes</h4>
+                            <div style="font-size: 2rem; font-weight: 700; color: #374151;">₹20/hour</div>
+                            <p style="color: #6b7280; margin-top: 0.5rem;">Charged per hour or part thereof</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="map-tab" class="tab-content">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Parking Map</h2>
+                </div>
+                <main class="main">
+        <div class="container">
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card available">
+                    <div class="stat-number" id="availableCount">24</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat-card occupied">
+                    <div class="stat-number" id="occupiedCount">38</div>
+                    <div class="stat-label">Occupied</div>
+                </div>
+                <div class="stat-card reserved">
+                    <div class="stat-number" id="reservedCount">2</div>
+                    <div class="stat-label">Reserved</div>
+                </div>
+                <div class="stat-card occupancy">
+                    <div class="stat-number" id="occupancyRate">59.4%</div>
+                    <div class="stat-label">Occupancy</div>
+                </div>
+            </div>
+
+            <!-- Parking Layout -->
+            <div class="parking-layout">
+                <div class="layout-header">
+                    <div class="layout-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h2>Parking Layout - <span id="currentLevel">Level 1</span></h2>
+                    </div>
+                    <div class="level-selector">
+                        <button class="level-btn active" data-level="1">Level 1</button>
+                        <button class="level-btn" data-level="2">Level 2</button>
+                        <button class="level-btn" data-level="3">Level 3</button>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color occupied"></div>
+                        <span>Occupied</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color reserved"></div>
+                        <span>Reserved</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color maintenance"></div>
+                        <span>Maintenance</span>
+                    </div>
+                    <div class="legend-item">
+                        <i class="fas fa-wheelchair legend-icon"></i>
+                        <span>Disabled Access</span>
+                    </div>
+                </div>
+
+                <!-- Parking Sections -->
+                <div class="parking-sections" id="parkingSections">
+                    <!-- Sections will be dynamically generated -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="modal-title">
+                    <div class="modal-icon">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <div>
+                        <h3>Reserve Parking Spot</h3>
+                        <p id="slotDetails">Level 1 - Section A - Spot 15</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-content">
+                <!-- Slot Details -->
+                <div class="slot-info">
+                    <h4>Spot Details</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Type:</span>
+                            <span class="info-value" id="slotType">Standard</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Location:</span>
+                            <span class="info-value" id="slotLocation">A1-15</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Duration Selection -->
+                <div class="duration-section">
+                    <h4>
+                        <i class="fas fa-clock"></i>
+                        Parking Duration
+                    </h4>
+                    <div class="duration-buttons">
+                        <button class="duration-btn" data-hours="0">30mins</button>
+                        <button class="duration-btn active" data-hours="1">1h</button>
+                        <button class="duration-btn" data-hours="2h">2h</button>
+                        <button class="duration-btn" data-hours="12h">12h</button>
+
+                    </div>
+                    <div class="duration-slider">
+                        <input type="range" id="durationRange" min="0.5" max="12" step="0.5" value="2">
+                        <div class="slider-labels">
+                            <span>30 min</span>
+                            <span id="selectedDuration">2 hours</span>
+                            <span>12 hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Info -->
+                <div class="vehicle-info">
+                    <h4>Vehicle Information</h4>
+                    <div class="vehicle-details">
+                        <i class="fas fa-car"></i>
+                        <div>
+                            <div class="license-plate">ABC-123</div>
+                            <div class="vehicle-type">Car</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="pricing-section">
+                    <div class="price-row">
+                        <span>Base Rate (<span id="durationText">2</span>h × ₹20/h)</span>
+                        <span id="basePrice">₹20.00</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total Amount</span>
+                        <span id="totalAmount">$5.95</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="cancelBooking">Cancel</button>
+                    <button class="btn btn-primary" id="confirmBooking">
+                        <i class="fas fa-credit-card"></i>
+                        Book & Pay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal success-modal">
+            <div class="success-content">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3>Booking Confirmed!</h3>
+                <p id="successMessage">Your parking spot A1-15 has been reserved successfully.</p>
+                <p class="redirect-text">Redirecting...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="slot-selection.js"></script>
+            </div>
+        </div>
+
+        <div id="ev-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">EV Charging Slots</h2>
+                </div>
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem; color: #8b5cf6; margin-bottom: 1rem;">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 style="margin-bottom: 1rem;">Electric Vehicle Charging</h3>
+                    <p style="color: #6b7280; margin-bottom: 2rem;">Special slots equipped with EV charging stations</p>
+                    <div style="background: #f3f4f6; padding: 1.5rem; border-radius: 8px; text-align: left;">
+                        <h4 style="margin-bottom: 1rem;">EV Charging Features:</h4>
+                        <ul style="color: #6b7280; line-height: 1.8;">
+                            <li>Fast charging capability (up to 50kW)</li>
+                            <li>Compatible with all major EV brands</li>
+                            <li>Same parking rates apply</li>
+                            <li>Charging fees separate (₹10/kWh)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/parking.js"></script>
+    <script>
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user) return;
+
+            // Update user info in header
+            document.getElementById('userName').textContent = user.username || 'User';
+            document.getElementById('userAvatar').textContent = (user.username || 'User').charAt(0).toUpperCase();
+
+            // Initialize parking system
+            initializeParkingSystem();
+            updateDashboardStats();
+            renderParkingSlots();
+            renderParkingHistory();
+            
+            // Start timer for active booking
+            startBookingTimer();
+        });
+
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

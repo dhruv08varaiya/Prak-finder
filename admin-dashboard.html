@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ParkFinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #374151;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #6366f1;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-badge {
+            background: #dc2626;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color, #6366f1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .stat-change {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .stat-change.positive {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .stat-change.negative {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .admin-slot {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.875rem;
+            position: relative;
+        }
+
+        .admin-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .admin-slot.available {
+            background: #10b981;
+            color: white;
+        }
+
+        .admin-slot.booked {
+            background: #ef4444;
+            color: white;
+        }
+
+        .admin-slot.ev {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .role-admin {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .role-supervisor {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-user {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.875rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #6366f1;
+            transition: width 0.3s ease;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                gap: 0.5rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-parking"></i> ParkFinder Admin
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+                <button class="nav-tab" onclick="showTab('slots')">Slot Management</button>
+                <button class="nav-tab" onclick="showTab('bookings')">Slot Booked</button>
+                <button class="nav-tab" onclick="showTab('users')">Role Management</button>
+                <button class="nav-tab" onclick="showTab('cash')">Total Cash Collection</button>
+                <button class="nav-tab" onclick="showTab('analytics')">Analytics</button>
+            </div>
+            <div class="admin-info">
+                <span class="admin-badge">ADMIN</span>
+                <span>Administrator</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent-color: #10b981;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalSlots">50</div>
+                            <div class="stat-label">Total Slots</div>
+                        </div>
+                        <div class="stat-icon" style="background: #10b981;">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive" id="availableSlots">45 Available</div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #6366f1;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="activeBookings">5</div>
+                            <div class="stat-label">Active Bookings</div>
+                        </div>
+                        <div class="stat-icon" style="background: #6366f1;">
+                            <i class="fas fa-car"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive" id="bookingChange">+12% today</div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #f59e0b;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalRevenue">₹2,450</div>
+                            <div class="stat-label">Today's Revenue</div>
+                        </div>
+                        <div class="stat-icon" style="background: #f59e0b;">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive" id="revenueChange">+8% vs yesterday</div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #8b5cf6;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalUsers">24</div>
+                            <div class="stat-label">Registered Users</div>
+                        </div>
+                        <div class="stat-icon" style="background: #8b5cf6;">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-change positive" id="userChange">+3 this week</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Activity</h2>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Slot</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentActivityTable">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading recent activity...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slot Management Tab -->
+        <div id="slots-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Parking Slot Management</h2>
+                    <div>
+                        <button class="btn btn-success" onclick="markAllAvailable()">
+                            <i class="fas fa-check-circle"></i> Mark All Available
+                        </button>
+                        <button class="btn btn-primary" onclick="updateHourlyRate()">
+                            <i class="fas fa-edit"></i> Update Rate
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #10b981;"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ef4444;"></div>
+                        <span>Booked</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8b5cf6;"></div>
+                        <span>EV Charging</span>
+                    </div>
+                </div>
+
+                <div class="slots-grid" id="adminSlotsGrid">
+                    <!-- Slots will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="bookings-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">All Bookings</h2>
+                    <button class="btn btn-primary" onclick="exportBookings()">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>User</th>
+                                <th>Slot</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Duration</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allBookingsTable">
+                            <tr>
+                                <td colspan="9" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading bookings...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Management Tab -->
+        <div id="users-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">User Role Management</h2>
+                    <button class="btn btn-primary" onclick="addNewUser()">
+                        <i class="fas fa-user-plus"></i> Add User
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Current Role</th>
+                                <th>Total Spent</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading users...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash Collection Tab -->
+        <div id="cash-tab" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent-color: #10b981;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="todayCollection">₹0</div>
+                            <div class="stat-label">Today's Collection</div>
+                        </div>
+                        <div class="stat-icon" style="background: #10b981;">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #6366f1;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="weekCollection">₹0</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                        <div class="stat-icon" style="background: #6366f1;">
+                            <i class="fas fa-calendar-week"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #f59e0b;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="monthCollection">₹0</div>
+                            <div class="stat-label">This Month</div>
+                        </div>
+                        <div class="stat-icon" style="background: #f59e0b;">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #8b5cf6;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalCollection">₹0</div>
+                            <div class="stat-label">Total Collection</div>
+                        </div>
+                        <div class="stat-icon" style="background: #8b5cf6;">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Payment History</h2>
+                    <button class="btn btn-primary" onclick="generateReport()">
+                        <i class="fas fa-file-alt"></i> Generate Report
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>User</th>
+                                <th>Booking ID</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading payment history...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" class="tab-content">
+            <div class="analytics-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Slot Utilization</div>
+                    <div id="slotUtilizationChart">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Regular Slots</span>
+                                <span id="regularUtilization">75%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>EV Charging Slots</span>
+                                <span id="evUtilization">60%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%; background: #8b5cf6;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Peak Hours</div>
+                    <div id="peakHoursChart">
+                        <div style="color: #6b7280; text-align: center; padding: 2rem;">
+                            <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <div>Peak hours: 9 AM - 11 AM</div>
+                            <div>Off-peak: 2 PM - 4 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">Revenue Trend</div>
+                    <div id="revenueTrendChart">
+                        <div style="color: #6b7280; text-align: center; padding: 2rem;">
+                            <i class="fas fa-chart-line" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <div>Revenue trending upward</div>
+                            <div>+15% this month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">User Activity</div>
+                    <div id="userActivityChart">
+                        <div style="color: #6b7280; text-align: center; padding: 2rem;">
+                            <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                            <div>Active users: 18</div>
+                            <div>New registrations: 3</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Change Modal -->
+    <div id="roleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Change User Role</h3>
+                <button class="close-btn" onclick="closeModal('roleModal')">&times;</button>
+            </div>
+            <form id="roleChangeForm">
+                <div class="form-group">
+                    <label>User</label>
+                    <input type="text" id="modalUsername" readonly>
+                </div>
+                <div class="form-group">
+                    <label>New Role</label>
+                    <select id="modalRole">
+                        <option value="user">Normal User</option>
+                        <option value="supervisor">Supervisor</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('roleModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Role</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rate Update Modal -->
+    <div id="rateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Hourly Rate</h3>
+                <button class="close-btn" onclick="closeModal('rateModal')">&times;</button>
+            </div>
+            <form id="rateUpdateForm">
+                <div class="form-group">
+                    <label>Current Rate</label>
+                    <input type="text" value="₹20/hour" readonly>
+                </div>
+                <div class="form-group">
+                    <label>New Rate (₹/hour)</label>
+                    <input type="number" id="newRate" min="1" max="100" value="20" required>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('rateModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Rate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/parking.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        // Initialize admin dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user || user.role !== 'admin') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Initialize admin functionality
+            initializeAdminDashboard();
+        });
+
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

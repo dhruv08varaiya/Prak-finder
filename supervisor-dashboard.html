@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Dashboard - ParkFinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8fafc;
+            color: #374151;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-tab {
+            padding: 0.5rem 1rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: #6366f1;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e5e7eb;
+        }
+
+        .supervisor-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .supervisor-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color, #6366f1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+
+        .supervisor-slot {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .supervisor-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .supervisor-slot.available {
+            background: #10b981;
+            color: white;
+        }
+
+        .supervisor-slot.booked {
+            background: #ef4444;
+            color: white;
+        }
+
+        .supervisor-slot.ev {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .supervisor-slot.issue {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .slot-number {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .slot-type {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-issue {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fbbf24;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 1px solid #60a5fa;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                gap: 0.5rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .slots-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-parking"></i> ParkFinder Supervisor
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('monitor')">Monitor</button>
+                <button class="nav-tab" onclick="showTab('bookings')">Bookings</button>
+                <button class="nav-tab" onclick="showTab('issues')">Issues</button>
+                <button class="nav-tab" onclick="showTab('reports')">Reports</button>
+                <button class="nav-tab" onclick="showTab('feedback')">Feedback</button>
+            </div>
+            <div class="supervisor-info">
+                <span class="supervisor-badge">SUPERVISOR</span>
+                <span id="supervisorName">Supervisor</span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Monitor Tab -->
+        <div id="monitor-tab" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent-color: #10b981;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="availableSlots">45</div>
+                            <div class="stat-label">Available Slots</div>
+                        </div>
+                        <div class="stat-icon" style="background: #10b981;">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #ef4444;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="occupiedSlots">5</div>
+                            <div class="stat-label">Occupied Slots</div>
+                        </div>
+                        <div class="stat-icon" style="background: #ef4444;">
+                            <i class="fas fa-car"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #f59e0b;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="issueSlots">0</div>
+                            <div class="stat-label">Issues Reported</div>
+                        </div>
+                        <div class="stat-icon" style="background: #f59e0b;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #6366f1;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="occupancyRate">10%</div>
+                            <div class="stat-label">Occupancy Rate</div>
+                        </div>
+                        <div class="stat-icon" style="background: #6366f1;">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>System Status:</strong> All systems operational. Last updated: <span id="lastUpdated">Just now</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Real-Time Slot Monitoring</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="refreshSlots()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                        <button class="btn btn-warning" onclick="reportIssue()">
+                            <i class="fas fa-exclamation-triangle"></i> Report Issue
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #10b981;"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ef4444;"></div>
+                        <span>Occupied</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8b5cf6;"></div>
+                        <span>EV Charging</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f59e0b;"></div>
+                        <span>Issue Reported</span>
+                    </div>
+                </div>
+
+                <div class="slots-grid" id="supervisorSlotsGrid">
+                    <!-- Slots will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="bookings-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Active Bookings Management</h2>
+                    <button class="btn btn-primary" onclick="refreshBookings()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>User</th>
+                                <th>Slot</th>
+                                <th>Start Time</th>
+                                <th>Duration</th>
+                                <th>Current Fee</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activeBookingsTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading active bookings...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Completed Bookings</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>User</th>
+                                <th>Slot</th>
+                                <th>Duration</th>
+                                <th>Amount</th>
+                                <th>Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedBookingsTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    Loading completed bookings...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Issues Tab -->
+        <div id="issues-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Reported Issues</h2>
+                    <button class="btn btn-warning" onclick="reportIssue()">
+                        <i class="fas fa-plus"></i> Report New Issue
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Issue ID</th>
+                                <th>Slot</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Priority</th>
+                                <th>Reported</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="issuesTable">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    No issues reported
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card" style="--accent-color: #10b981;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="todayBookings">0</div>
+                            <div class="stat-label">Today's Bookings</div>
+                        </div>
+                        <div class="stat-icon" style="background: #10b981;">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #6366f1;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="avgDuration">0h</div>
+                            <div class="stat-label">Avg Duration</div>
+                        </div>
+                        <div class="stat-icon" style="background: #6366f1;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #f59e0b;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="peakHour">10 AM</div>
+                            <div class="stat-label">Peak Hour</div>
+                        </div>
+                        <div class="stat-icon" style="background: #f59e0b;">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="--accent-color: #8b5cf6;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="evUsage">20%</div>
+                            <div class="stat-label">EV Slot Usage</div>
+                        </div>
+                        <div class="stat-icon" style="background: #8b5cf6;">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Generate Reports</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                    <button class="btn btn-primary" onclick="generateDailyReport()">
+                        <i class="fas fa-file-alt"></i> Daily Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateWeeklyReport()">
+                        <i class="fas fa-calendar-week"></i> Weekly Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateMonthlyReport()">
+                        <i class="fas fa-calendar-alt"></i> Monthly Report
+                    </button>
+                    <button class="btn btn-primary" onclick="generateIssueReport()">
+                        <i class="fas fa-exclamation-triangle"></i> Issues Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Tab -->
+        <div id="feedback-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">User Feedback</h2>
+                    <button class="btn btn-primary" onclick="refreshFeedback()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Type</th>
+                                <th>Message</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTable">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6b7280; padding: 2rem;">
+                                    No feedback available
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Issue Report Modal -->
+    <div id="issueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Report Issue</h3>
+                <button class="close-btn" onclick="closeModal('issueModal')">&times;</button>
+            </div>
+            <form id="issueReportForm">
+                <div class="form-group">
+                    <label>Slot Number</label>
+                    <select id="issueSlot" required>
+                        <option value="">Select Slot</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Issue Type</label>
+                    <select id="issueType" required>
+                        <option value="">Select Type</option>
+                        <option value="maintenance">Maintenance Required</option>
+                        <option value="damage">Physical Damage</option>
+                        <option value="electrical">Electrical Issue</option>
+                        <option value="cleaning">Cleaning Required</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="issuePriority" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="issueDescription" placeholder="Describe the issue in detail..." required></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('issueModal')">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Report Issue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/parking.js"></script>
+    <script src="js/supervisor.js"></script>
+    <script>
+        // Initialize supervisor dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user || user.role !== 'supervisor') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update supervisor info in header
+            document.getElementById('supervisorName').textContent = user.username || 'Supervisor';
+
+            // Initialize supervisor functionality
+            initializeSupervisorDashboard();
+        });
+
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all nav tabs
+            const navTabs = document.querySelectorAll('.nav-tab');
+            navTabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+
+            // Load tab-specific data
+            loadSupervisorTabData(tabName);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
